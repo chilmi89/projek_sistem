@@ -1,0 +1,112 @@
+/* Global Styles */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(45deg, #4b79a1, #283e51);
+    color: #fff;
+    font-family: "Arial", sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Content Wrapper */
+.content-wrapper {
+    flex: 1 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh; /* Pastikan konten utama mengisi layar */
+}
+
+/* Navbar */
+.navbar {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+/* Jumbotron */
+.jumbotron {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2.5rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    max-width: 70%;
+    text-align: center;
+    margin: auto;
+}
+
+/* Button */
+.btn-primary {
+    background-color: #4caf50;
+    border: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+/* Footer */
+footer {
+    flex-shrink: 0;
+    padding: 15px;
+    background: #343a40;
+    color: white;
+    text-align: center;
+    position: relative;
+}
+
+/* Media Queries */
+
+/* Desktop (min-width: 992px) */
+@media (min-width: 992px) {
+    .container-fluid {
+        max-width: 1200px; /* Batas maksimal agar tidak terlalu lebar */
+        margin: auto;
+    }
+
+    .jumbotron {
+        max-width: 60%;
+    }
+}
+
+/* Tablet (max-width: 768px) */
+@media (max-width: 767.98px) {
+    .container-fluid {
+        padding: 0 15px;
+    }
+
+    .jumbotron {
+        max-width: 85%;
+    }
+
+    .content-wrapper {
+        min-height: 85vh;
+    }
+}
+
+/* Mobile (max-width: 576px) */
+@media (max-width: 575.98px) {
+    .container-fluid {
+        padding: 0 10px;
+    }
+
+    .jumbotron {
+        padding: 1.5rem;
+        max-width: 90%;
+    }
+
+    .content-wrapper {
+        min-height: 80vh; /* Pastikan konten utama tetap memenuhi layar */
+    }
+
+    footer {
+        padding: 10px;
+        font-size: 0.85rem;
+    }
+}

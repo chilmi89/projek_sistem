@@ -1,0 +1,268 @@
+/* Reset and Base Styles */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: "Arial", sans-serif;
+    color: #333;
+    background: linear-gradient(45deg, #4b79a1, #283e51);
+}
+
+body {
+
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+.container.mt-4 {
+    flex: 1;
+    padding-bottom: 2rem;
+}
+
+/* Navbar Styles */
+.navbar {
+    background: rgba(0, 0, 0, 0.9);
+    padding: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar-brand {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    transition: color 0.3s ease;
+    padding: 0.5rem 1rem;
+}
+
+.navbar-nav .nav-link:hover {
+    color: white;
+}
+
+/* Main Content */
+.container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Card Styles */
+.card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+
+}
+
+.card-header {
+    background: #2196F3;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 1rem 1rem 0 0;
+    padding: 1.5rem;
+    color: white;
+}
+
+.card-body {
+    max-height: 70vh;
+    overflow-y: auto;
+
+}
+
+/* Form Elements */
+.form-control {
+    background: white;
+    border: 1px solid #dee2e6;
+    color: #333;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    background: white;
+    border-color: #2196F3;
+    box-shadow: 0 0 0 0.2rem rgba(33, 150, 243, 0.25);
+}
+
+.form-control::placeholder {
+    color: #6c757d;
+}
+
+.form-label {
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+/* Buttons */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary, .btn-info {
+    border: none;
+    min-width: 120px;
+}
+
+.btn-primary:hover, .btn-info:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Footer */
+footer {
+    margin-top: auto;
+    background: #343a40;
+    padding: 0.5rem 0;
+    margin-top: auto;
+    color: white;
+    width: 100%;
+}
+
+footer .container {
+    min-height: auto;
+    padding: 0.5rem;
+}
+
+footer p {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+footer .list-inline {
+    margin-bottom: 0;
+}
+
+footer .list-inline-item {
+    margin: 0 0.5rem;
+}
+
+footer a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+footer a:hover {
+    color: white;
+}
+
+/* Modal Styles */
+.modal-content {
+    background: white;
+    border-radius: 1rem;
+}
+
+.modal-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+/* Desktop (≥1200px) */
+@media (min-width: 1200px) {
+    .container {
+        padding: 3rem;
+    }
+
+    .card {
+        margin: 0 auto;
+        max-width: 1000px;
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    .form-control {
+        padding: 0.75rem;
+    }
+
+    footer {
+        padding: 1rem 0;
+    }
+}
+
+/* Tablet (768px - 1199px) */
+@media (min-width: 768px) and (max-width: 1199px) {
+    .container {
+        padding: 2rem;
+    }
+
+    .card {
+        margin: 0 auto;
+        max-width: 90%;
+    }
+
+    .navbar-brand {
+        font-size: 1.3rem;
+    }
+}
+
+/* Mobile (<768px) */
+@media (max-width: 767px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .card {
+        margin: 0 auto;
+        max-width: 100%;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+
+    .btn {
+        width: 100%;
+        margin: 0.5rem 0;
+    }
+
+    .d-flex {
+        flex-direction: column;
+    }
+
+    .row {
+        margin: 0;
+    }
+
+    .col-md-6 {
+        padding: 0;
+    }
+
+    footer {
+        padding: 0.75rem 0;
+    }
+
+    footer p {
+        font-size: 0.85rem;
+        margin-bottom: 0.3rem;
+    }
+
+    footer .list-inline-item {
+        display: inline-block;
+        margin: 0.2rem 0.3rem;
+    }
+}
