@@ -17,7 +17,7 @@ class MataPelajaran extends Model
     // Jika primary key bukan auto-increment, set false
     public $incrementing = true;
 
-    // Jika primary key bukan integer, tentukan tipe data
+    // Jika primary key bukan integer, tentukan tipe d
     protected $keyType = 'int';
 
     // Kolom yang bisa diisi (fillable)
