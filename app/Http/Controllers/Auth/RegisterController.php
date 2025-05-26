@@ -37,8 +37,6 @@ class RegisterController extends Controller
             // Memberikan permission
             $user->givePermissionTo([
                 'view dashboard siswa',
-                'input data siswa',
-                'input nilai siswa',
                 'lihat nilai'
             ]);
 

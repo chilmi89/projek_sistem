@@ -38,14 +38,15 @@ class RolesAndPermissionsSeeder extends Seeder
             'ubah mata pelajaran',
             'hapus mata pelajaran',
             'view dashboard guru',
+            'input data siswa',
+            'input nilai siswa',
             'management data siswa'
+
         ]);
 
         $siswaRole = Role::create(['name' => 'siswa']);
         $siswaRole->givePermissionTo([
             'view dashboard siswa',
-            'input data siswa',
-            'input nilai siswa',
             'lihat nilai'
         ]);
     }
