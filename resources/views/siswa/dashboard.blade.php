@@ -87,9 +87,7 @@
                         </a>
                     </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link {{ Request::routeIs('siswa.index') ? 'active' : '' }}" href="{{ route('siswa.index') }}">Regis Data</a>
-                    </li>
+                    
                     <li class="nav-item">
                         <a class="nav-link {{ Request::routeIs('nilai.index') ? 'active' : '' }}" href="">Input Nilai</a>
                     </li>
@@ -120,7 +118,6 @@
                 <p class="lead">Ini adalah halaman dashboard interaktif untuk siswa.</p>
                 <hr class="my-4" />
                 <p>Gunakan tombol di bawah untuk menjelajahi fitur-fitur menarik.</p>
-                <a class="btn btn-primary btn-lg" href="{{ route('siswa.index') }}" role="button">regis data siswa</a>
             </div>
         </div>
     </div>

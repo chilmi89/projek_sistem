@@ -8,27 +8,33 @@ use Illuminate\Database\Eloquent\Model;
 class MataPelajaran extends Model
 {
     use HasFactory;
-    // Tentukan nama tabel jika tidak sesuai dengan konvensi Laravel
+
     protected $table = 'mata_pelajaran';
 
-    // Tentukan primary key jika bukan 'id'
     protected $primaryKey = 'id';
 
-    // Jika primary key bukan auto-increment, set false
     public $incrementing = true;
 
-    // Jika primary key bukan integer, tentukan tipe d
     protected $keyType = 'int';
 
-    // Kolom yang bisa diisi (fillable)
+    // Kolom yang bisa diisi
     protected $fillable = [
         'nama_mapel',
-        'bobot',
-        'deskripsi',
+        'kriteria_id',
+        'kode_kriteria',
     ];
 
+    // Relasi: satu mata pelajaran memiliki satu kriteria
+    public function kriteria()
+    {
+        return $this->belongsTo(Kriteria::class, 'kriteria_id');
+    }
+
+    // Relasi: satu mata pelajaran bisa punya banyak nilai
     public function nilai()
     {
         return $this->hasMany(Nilai::class, 'mata_pelajaran_id', 'id');
     }
+
 }
+
