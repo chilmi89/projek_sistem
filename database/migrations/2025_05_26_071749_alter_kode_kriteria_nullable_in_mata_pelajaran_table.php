@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('siswa', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('nama');
-            $table->char('nisn', 10)->unique();
-            $table->timestamps();
+        Schema::table('mata_pelajaran', function (Blueprint $table) {
+            $table->string('kode_kriteria')->nullable()->change();
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('siswa');
+        Schema::table('mata_pelajaran', function (Blueprint $table) {
+            $table->string('kode_kriteria')->nullable(false)->change();
+        });
     }
 };

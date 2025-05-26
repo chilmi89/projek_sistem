@@ -20,29 +20,31 @@ class RegisterController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users|max:255',
-            'password' => 'required|min:6|confirmed',
+            'password' => 'required|min:6',
+            'nisn' => 'required|unique:siswa,nisn', // validasi nisn
         ]);
 
         try {
-            // Membuat user baru
+            // Simpan user ke tabel users
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
             ]);
 
-            // Memberikan role default 'siswa'
+            // Beri role siswa (jika bukan guru)
             $user->assignRole('siswa');
 
             // Memberikan permission
             $user->givePermissionTo([
                 'view dashboard siswa',
+                'input data siswa',
+                'input nilai siswa',
                 'lihat nilai'
             ]);
 
-            // Redirect ke halaman login dengan pesan sukses
+            // Redirect
             return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan login.');
-
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Registrasi gagal! ' . $e->getMessage());
         }

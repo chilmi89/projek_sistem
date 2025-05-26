@@ -26,10 +26,10 @@
                         <a class="nav-link {{ Request::is('home') ? 'active' : '' }}"
                             href="{{ route('home') }}">Home</a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link {{ Request::is('siswa*') ? 'active' : '' }}"
                             href="{{ route('siswa.index') }}">regis-data</a>
-                    </li>
+                    </li> -->
                     <li class="nav-item">
                         <a class="nav-link {{ Request::is('nilai*') ? 'active' : '' }}"
                             href="{{ route('siswa.nilai') }}">Input-Nilai</a>

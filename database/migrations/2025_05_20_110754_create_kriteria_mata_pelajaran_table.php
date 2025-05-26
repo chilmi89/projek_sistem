@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('siswa', function (Blueprint $table) {
+        Schema::create('kriteria_mata_pelajaran', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('nama');
-            $table->char('nisn', 10)->unique();
+            $table->foreignId('kriteria_id')->constrained('kriteria')->onDelete('cascade');
+            $table->foreignId('mata_pelajaran_id')->constrained('mata_pelajaran')->onDelete('cascade');
+            $table->decimal('bobot', 5, 2); // Bobot spesifik mata pelajaran dalam kriteria
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('siswa');
+        Schema::dropIfExists('kriteria_mata_pelajaran');
     }
 };

@@ -7,25 +7,37 @@ use Illuminate\Database\Eloquent\Model;
 
 class Siswa extends Model
 {
-
     use HasFactory;
 
-    protected $table = 'siswa'; // Pastikan menggunakan nama tabel yang benar
+    protected $table = 'siswa';
 
     protected $fillable = [
         'user_id',
         'nama',
-        'email',
         'nisn',
-        'kelas',
-        'no_absen',
     ];
+ // Relasi ke User
     public function user()
     {
         return $this->belongsTo(User::class);
     }
+
+    // Relasi ke Nilai
     public function nilai()
     {
-        return $this->hasMany(Nilai::class, 'siswa_id'); // Sesuaikan dengan kolom foreign key
+        return $this->hasMany(Nilai::class, 'siswa_id');
+    }
+
+    // Relasi ke MataPelajaran melalui tabel nilai
+    public function mataPelajaran()
+    {
+        return $this->hasManyThrough(
+            MataPelajaran::class, // Model yang dituju
+            Nilai::class,         // Model perantara
+            'siswa_id',           // Foreign key di tabel nilai
+            'id',                 // Foreign key di tabel mata_pelajaran
+            'id',                 // Local key di tabel siswa
+            'mata_pelajaran_id'   // Local key di tabel nilai
+        );
     }
 }

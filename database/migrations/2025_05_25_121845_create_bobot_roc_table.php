@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('siswa', function (Blueprint $table) {
+        Schema::create('bobot_roc', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('nama');
-            $table->char('nisn', 10)->unique();
+            $table->tinyInteger('bobot'); // dari 1 - 5
+            $table->decimal('nilai_roc', 4, 2); // Misal: 0.46
+            $table->string('keterangan');
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('siswa');
+        Schema::dropIfExists('bobot_roc');
     }
 };
