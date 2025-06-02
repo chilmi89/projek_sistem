@@ -60,7 +60,7 @@
                     {{-- Nama --}}
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" placeholder="name" required value="{{ old('name') }}">
-                        <label for="name">Masukkan Nama</label>
+                        <label for="name">Masukkan Nama lengkap</label>
                         @error('name')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -84,20 +84,23 @@
                         @enderror
                     </div>
 
-
-                    {{-- NISN --}}
+                    {{-- Konfirmasi Password --}}
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control @error('nisn') is-invalid @enderror" id="nisn" name="nisn" placeholder="Masukkan NISN" required value="{{ old('nisn') }}">
-                        <label for="nisn">Masukkan NISN Anda</label>
-                        @error('nisn')
+                        <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror"
+                        id="password_confirmation" name="password_confirmation" placeholder="Password" required>
+                        <label for="password_confirmation">Konfirmasi Password</label>
+                        @error('password_confirmation')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-            
+                    {{-- NISN --}}
+
+
                     <div class="d-flex justify-content-between align-items-center">
                         <a href="{{ route('login') }}" class="btn btn-secondary">Login</a>
                         <button type="submit" class="btn btn-primary">Register</button>
                     </div>
+
 
                     <hr class="my-4">
                     <small class="text-muted">By clicking Sign in, you agree to the terms of use.</small>

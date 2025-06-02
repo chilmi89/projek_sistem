@@ -4,19 +4,20 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('bobot_iq', function (Blueprint $table) {
+        Schema::create('hasil_bobot', function (Blueprint $table) {
             $table->id();
-            $table->integer('nilai_min');
-            $table->integer('nilai_max');
-            $table->tinyInteger('bobot'); // 1 - 5
-            $table->string('keterangan');
+            $table->string('nama');
+            $table->integer('c1');
+            $table->integer('c2');
+            $table->integer('c3');
+            $table->integer('c4');
+            $table->integer('c5');
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bobot_iq');
+        Schema::dropIfExists('hasil_bobot');
     }
 };

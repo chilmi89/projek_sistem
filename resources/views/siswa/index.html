@@ -1,0 +1,260 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Metodologi WP + ROC</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f9f9f9;
+    }
+
+    h2 {
+      background-color: #004c99;
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    .box {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    th, td {
+      border: 1px solid #cccccc;
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #e6f2ff;
+    }
+
+    .note {
+      margin-top: 10px;
+      padding: 10px;
+      background: #fff3cd;
+      border-left: 5px solid #ffecb5;
+    }
+
+    .highlight-yellow {
+      background-color: #fff9c4;
+    }
+
+    .highlight-orange {
+      background-color: #ffe0b2;
+    }
+
+    code {
+      background-color: #f4f4f4;
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-family: Consolas, monospace;
+    }
+
+    /* MODAL STYLES */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 99;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 5% auto;
+      padding: 20px;
+      border-radius: 8px;
+      width: 80%;
+      max-width: 700px;
+      position: relative;
+    }
+
+    .close {
+      color: #aaa;
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn-modal {
+      padding: 8px 15px;
+      background-color: #007acc;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px 5px 15px 0;
+    }
+
+    .btn-modal:hover {
+      background-color: #005fa3;
+    }
+
+  </style>
+</head>
+<body>
+
+  <h2>Langkah-Langkah Metodologi Weighted Product (WP)</h2>
+  <div class="box">
+    <ol>
+      <li>Menentukan kriteria dan alternatif</li>
+      <li>Menentukan bobot awal setiap kriteria</li>
+      <li>Melakukan normalisasi bobot</li>
+      <li>Menghitung nilai vektor S untuk setiap alternatif</li>
+      <li>Menghitung nilai vektor V</li>
+      <li>Melakukan perankingan berdasarkan nilai V</li>
+    </ol>
+  </div>
+
+  <h2>Tabel Bobot dan Normalisasi</h2>
+  <div class="box">
+    <table>
+      <tr>
+        <th>Kriteria</th>
+        <th>Bobot Awal (wj)</th>
+        <th>Normalisasi (Wj)</th>
+      </tr>
+      <tr>
+        <td>K1</td>
+        <td>4</td>
+        <td>0.4</td>
+      </tr>
+      <tr>
+        <td>K2</td>
+        <td>3</td>
+        <td>0.3</td>
+      </tr>
+      <tr>
+        <td>K3</td>
+        <td>3</td>
+        <td>0.3</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>Tabel Nilai Alternatif (Xij)</h2>
+  <div class="box">
+    <table>
+      <tr>
+        <th>Alternatif</th>
+        <th>K1</th>
+        <th>K2</th>
+        <th>K3</th>
+      </tr>
+      <tr class="highlight-yellow">
+        <td>A1</td>
+        <td>80</td>
+        <td>70</td>
+        <td>90</td>
+      </tr>
+      <tr>
+        <td>A2</td>
+        <td>75</td>
+        <td>85</td>
+        <td>80</td>
+      </tr>
+      <tr class="highlight-orange">
+        <td>A3</td>
+        <td>60</td>
+        <td>65</td>
+        <td>70</td>
+      </tr>
+    </table>
+    <div class="note">
+      <strong>NB:</strong><br>
+      Warna <span class="highlight-yellow">Kuning</span> menunjukkan mapel yang diminati siswa.<br>
+      Warna <span class="highlight-orange">Orange</span> menunjukkan wajib tes IQ.
+    </div>
+  </div>
+
+  <h2>Rumus dan Penjelasan</h2>
+  <div class="box">
+    <button class="btn-modal" onclick="openModal('modal1')">Normalisasi Bobot</button>
+    <button class="btn-modal" onclick="openModal('modal2')">Vektor S</button>
+    <button class="btn-modal" onclick="openModal('modal3')">Vektor V</button>
+  </div>
+
+  <!-- MODAL NORMALISASI -->
+  <div id="modal1" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('modal1')">&times;</span>
+      <h3>Normalisasi Bobot</h3>
+      <p><strong>Rumus:</strong></p>
+      <code>Wj = wj / Σwj</code>
+      <p>
+        Wj menyatakan bobot yang telah dinormalisasi berdasarkan jumlah total semua bobot awal wj.
+        Digunakan agar total bobot = 1.
+      </p>
+    </div>
+  </div>
+
+  <!-- MODAL VEKTOR S -->
+  <div id="modal2" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('modal2')">&times;</span>
+      <h3>Perhitungan Vektor S</h3>
+      <p><strong>Rumus:</strong></p>
+      <code>Si = ∏(xij<sup>Wj</sup>)</code>
+      <p>
+        Si adalah hasil dari perkalian semua nilai kriteria (xij) pada alternatif i, yang dipangkatkan dengan bobot Wj.
+        Vektor S menyatakan preferensi awal alternatif.
+      </p>
+    </div>
+  </div>
+
+  <!-- MODAL VEKTOR V -->
+  <div id="modal3" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('modal3')">&times;</span>
+      <h3>Perhitungan Vektor V</h3>
+      <p><strong>Rumus:</strong></p>
+      <code>Vi = Si / ΣSi</code>
+      <p>
+        Vi adalah hasil pembagian dari nilai vektor S terhadap jumlah semua vektor S. Nilai Vi digunakan
+        untuk menentukan ranking akhir setiap alternatif.
+      </p>
+    </div>
+  </div>
+
+  <!-- SCRIPT MODAL -->
+  <script>
+    function openModal(id) {
+      document.getElementById(id).style.display = "block";
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).style.display = "none";
+    }
+
+    window.onclick = function(event) {
+      document.querySelectorAll('.modal').forEach(modal => {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>

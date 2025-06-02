@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('siswa', function (Blueprint $table) {
-            //
+        Schema::table('kuota_kelas', function (Blueprint $table) {
+            $table->integer('total_kapasitas')->default(36);
         });
     }
 
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('siswa', function (Blueprint $table) {
+        Schema::table('kuota_kelas', function (Blueprint $table) {
             //
         });
     }

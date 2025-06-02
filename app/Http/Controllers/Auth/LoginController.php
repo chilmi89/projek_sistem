@@ -43,7 +43,8 @@ class LoginController extends Controller
             return redirect()->route('siswa.dashboard');
         }
 
-        return redirect('/')->with('error', 'Role tidak dikenali.');
+        Auth::logout();
+        return redirect()->route('login')->with('error', 'Akun Anda belum memiliki role yang sesuai.');
     }
 
     public function logout(Request $request)

@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\MataPelajaran;
 use App\Models\Kriteria;
+use App\Models\SubKriteria;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+
 use Illuminate\Support\Facades\Log;
 
 class GuruController extends Controller
@@ -19,19 +21,24 @@ class GuruController extends Controller
     {
         $user = Auth::user();
         try {
-            $mataPelajaran = MataPelajaran::all();
+
             $kriterias = Kriteria::all();
-            Log::info('Jumlah mata pelajaran: ' . $mataPelajaran->count());
-            return view('guru.dashboard', compact('mataPelajaran', 'kriterias'));
+            $subKriterias = SubKriteria::with('kriteria')->get(); // Tambahkan ini
+
+            Log::info('Jumlah mata pelajaran: ');
+
+            return view('guru.dashboard', compact('subKriterias', 'kriterias'));
         } catch (\Exception $e) {
             Log::error('Gagal mengambil data: ' . $e->getMessage());
             return view('guru.dashboard', [
-                'mataPelajaran' => collect(), // Koleksi kosong sebagai cadangan
+
                 'kriterias' => collect(),
+                'subKriterias' => collect(), // kosong juga kalau error
                 'error' => 'Gagal memuat data. Silakan coba lagi nanti.'
             ]);
         }
     }
+
 
     /**
      * Simpan mata pelajaran baru
@@ -49,8 +56,8 @@ class GuruController extends Controller
             $kriteria = Kriteria::findOrFail($request->kriteria_id);
 
             $data = [
-                'nama_mapel'    => $request->nama_mapel,
-                'kriteria_id'   => $kriteria->id,
+                'nama_mapel' => $request->nama_mapel,
+                'kriteria_id' => $kriteria->id,
                 'kode_kriteria' => $kriteria->kode,
             ];
 

@@ -16,10 +16,11 @@ class KriteriaController extends Controller
             'kode' => 'required|string|unique:kriteria,kode',
             'nama' => 'required|string',
             'jenis' => 'required|in:Benefit,Cost',
-            
         ]);
 
         Kriteria::create($validated);
+
+        $this->hitungBobotROC();
 
         return redirect()->route('guru.dashboard')->with('success', 'Kriteria berhasil dibuat');
     }
@@ -31,10 +32,11 @@ class KriteriaController extends Controller
             'kode' => 'required|string|unique:kriteria,kode,' . $kriteria->id,
             'nama' => 'required|string',
             'jenis' => 'required|in:Benefit,Cost',
-            
         ]);
 
         $kriteria->update($validated);
+
+        $this->hitungBobotROC();
 
         return redirect()->route('guru.dashboard')->with('success', 'Kriteria berhasil diperbarui');
     }
@@ -46,4 +48,27 @@ class KriteriaController extends Controller
 
         return redirect()->route('guru.dashboard')->with('success', 'Kriteria berhasil dihapus');
     }
+
+    private function hitungBobotROC()
+    {
+        $kriterias = Kriteria::orderBy('id', 'asc')->get();
+        $n = $kriterias->count();
+
+        $bobotROC = [];
+
+        for ($i = 1; $i <= $n; $i++) {
+            $sum = 0;
+            for ($j = $i; $j <= $n; $j++) {
+                $sum += 1 / $j;
+            }
+            $bobotROC[] = round($sum / $n, 2);  // 2 digit di belakang koma
+        }
+
+        foreach ($kriterias as $index => $kriteria) {
+            $kriteria->update(['bobot_roc' => $bobotROC[$index]]);
+        }
+    }
+
+
+
 }

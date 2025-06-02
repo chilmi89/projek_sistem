@@ -4,15 +4,14 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::table('mata_pelajaran', function (Blueprint $table) {
-            $table->string('kode_kriteria')->nullable()->change();
+        Schema::table('kriteria', function (Blueprint $table) {
+            $table->float('bobot_roc')->default(0);
         });
     }
 
@@ -21,8 +20,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('mata_pelajaran', function (Blueprint $table) {
-            $table->string('kode_kriteria')->nullable(false)->change();
+        Schema::table('kriteria', function (Blueprint $table) {
+            //
         });
     }
 };

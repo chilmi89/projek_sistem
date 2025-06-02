@@ -1,0 +1,64 @@
+.info-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.class-card {
+    border-radius: 10px;
+    transition: transform 0.2s;
+    border: none;
+}
+
+.class-card:hover {
+    transform: translateY(-5px);
+}
+
+.badge-status {
+    font-size: 0.8em;
+    padding: 0.5em 1em;
+}
+
+.btn-edit {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    color: white;
+    font-size: 0.85em;
+}
+
+.btn-delete {
+    background: linear-gradient(45deg, #dc3545, #e83e8c);
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    color: white;
+    font-size: 0.85em;
+}
+
+.btn-add {
+    background: linear-gradient(45deg, #007bff, #6610f2);
+    border: none;
+    border-radius: 20px;
+    padding: 10px 20px;
+    color: white;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.table-responsive {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}

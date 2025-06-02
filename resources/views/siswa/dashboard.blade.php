@@ -87,7 +87,7 @@
                         </a>
                     </li>
 
-                    
+
                     <li class="nav-item">
                         <a class="nav-link {{ Request::routeIs('nilai.index') ? 'active' : '' }}" href="">Input Nilai</a>
                     </li>
@@ -118,6 +118,8 @@
                 <p class="lead">Ini adalah halaman dashboard interaktif untuk siswa.</p>
                 <hr class="my-4" />
                 <p>Gunakan tombol di bawah untuk menjelajahi fitur-fitur menarik.</p>
+                <a href="{{ route('siswa.lihat-nilai') }}" class="btn btn-primary">Lihat Nilai</a>
+
             </div>
         </div>
     </div>

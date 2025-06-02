@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\SubKriteria;
 
 class Kriteria extends Model
 {
@@ -13,18 +14,20 @@ class Kriteria extends Model
     protected $fillable = [
         'kode',
         'nama',
+        'bobot_roc',
         'jenis',
     ];
 
     // Relasi: Kriteria punya banyak SubKriteria
+    // Relasi: Kriteria punya banyak SubKriteria
     public function subKriterias()
     {
-        return $this->hasMany(BobotKriteria::class, 'kriteria_id');
+        return $this->hasMany(SubKriteria::class, 'kode_kriteria', 'kode');
     }
-    public function mataPelajaran()
+
+    public function hasilPerhitungans()
     {
-        return $this->belongsToMany(MataPelajaran::class, 'kriteria_mata_pelajaran')
-            ->withPivot('bobot')
-            ->withTimestamps();
+        return $this->hasMany(HasilPerhitungan::class, 'kode_kriteria', 'kode');
     }
+
 }

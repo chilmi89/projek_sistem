@@ -11,11 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kriteria_mata_pelajaran', function (Blueprint $table) {
+        Schema::create('students', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('kriteria_id')->constrained('kriteria')->onDelete('cascade');
-            $table->foreignId('mata_pelajaran_id')->constrained('mata_pelajaran')->onDelete('cascade');
-            $table->decimal('bobot', 5, 2); // Bobot spesifik mata pelajaran dalam kriteria
+            $table->string('nama');
+            $table->integer('mtk_um');
+            $table->integer('ipa');
+            $table->integer('ips');
+            $table->integer('b_ing');
+            $table->integer('tes_iq');
             $table->timestamps();
         });
     }
@@ -25,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kriteria_mata_pelajaran');
+        Schema::dropIfExists('students');
     }
 };

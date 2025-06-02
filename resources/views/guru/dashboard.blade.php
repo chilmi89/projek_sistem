@@ -4,25 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    @if (session('success'))
-    <meta name="success-message" content="{{ session('success') }}">
-    @endif
-    @if (session('error'))
-    <meta name="error-message" content="{{ session('error') }}">
-    @endif
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Guru Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
-    <title>Dashboard Admin</title>
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
 
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid px-3">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid px-4">
             <a class="navbar-brand" href="#">Kode</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,12 +23,26 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link active" href="#">Dashboard 1</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#features">Dashboard 2</a></li>
+
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ route('home') }}"> home </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ route('import.index') }}">Dashboard 2</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ route('guru.hasil.kuota-kelas.index') }}">kuota kelas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ route('guru.hasil.index') }}">Dashboard 3</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ route('guru.metodologi') }}">metodolgi </a>
+                    </li>
                     <li class="nav-item">
                         <form action="{{ route('logout') }}" method="POST" id="logout-form">
                             @csrf
-                            <button type="submit" class="nav-link btn btn-link p-0">Logout</button>
+                            <button type="submit" class="nav-link btn btn-link text-light">Logout</button>
                         </form>
                     </li>
                 </ul>
@@ -44,127 +51,102 @@
     </nav>
 
     <!-- Content Wrapper -->
-    <div class="content-wrapper">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8 col-md-10 col-sm-12">
-                    <div class="card shadow-sm">
-                        <div class="d-flex gap-2 p-3">
-                            <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addDataModal">
-                                <i class="fas fa-plus-circle"></i> Tambah Data
-                            </button>
-                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addKriteriaModal">
+    <div class="container my-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-md-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center p-3">
+                        <h5 class="card-title mb-0">Sub Kriteria</h5>
+                        <div>
+                            <button class="btn btn-primary btn-sm me-2" data-bs-toggle="modal"
+                                data-bs-target="#addKriteriaModal">
                                 <i class="fas fa-list"></i> Tambah Kriteria
                             </button>
-                            <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#addBobotKriteriaModal">
+                            <button class="btn btn-secondary btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#addSubKriteriaModal">
                                 <i class="fas fa-layer-group"></i> Tambah Sub Kriteria
                             </button>
+                            <a href="{{ route('sub-kriteria.index') }}" class="btn btn-secondary btn-sm">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </a>
                         </div>
-
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table table-bordered mb-0">
-                                    <thead class="bg-light">
-                                        <tr>
-                                            <th style="width: 15%">Kode</th>
-                                            <th style="width: 45%">Mata Pelajaran</th>
-                                            <th style="width: 20%">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <>
-                                        @if ($mataPelajaran->isEmpty())
-                                        <tr>
-                                            <td colspan="3" class="text-center">Tidak ada data mata pelajaran.</td>
-                                        </tr>
-                                        @else
-
-                                        @foreach ($mataPelajaran as $item)
-                                        <tr>
-                                            <td>{{ $item->id }}</td>
-                                            <td>{{ $item->nama_mapel }}</td>
-
-                                            <td>
-                                                <div class="btn-group btn-group-sm">
-                                                    <button class="btn btn-warning" data-bs-toggle="modal"
-                                                        data-bs-target="#editDataModal{{ $item->id }}">
-                                                        <i class="fas fa-edit"></i> Edit
-                                                    </button>
-                                                    <button class="btn btn-danger" data-bs-toggle="modal"
-                                                        data-bs-target="#deleteDataModal{{ $item->id }}">
-                                                        <i class="fas fa-trash"></i> Hapus
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <!-- Modal Edit -->
-                                        <div class="modal fade" id="editDataModal{{ $item->id }}" tabindex="-1"
-                                            aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title">Edit Data</h5>
-                                                        <button type="button" class="btn-close"
-                                                            data-bs-dismiss="modal"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <form
-                                                            action="{{ route('guru.mata-pelajaran.update', $item->id) }}"
-                                                            method="POST">
-                                                            @csrf
-                                                            @method('PUT')
-                                                            <div class="mb-3">
-                                                                <label class="form-label">Mata Pelajaran</label>
-                                                                <input type="text" class="form-control"
-                                                                    name="nama_mapel"
-                                                                    value="{{ $item->nama_mapel }}" required>
-                                                            </div>
-
-                                                            <button type="submit"
-                                                                class="btn btn-primary">Simpan</button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Modal Hapus -->
-                                        <div class="modal fade" id="deleteDataModal{{ $item->id }}"
-                                            tabindex="-1" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title">Hapus Data</h5>
-                                                        <button type="button" class="btn-close"
-                                                            data-bs-dismiss="modal"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <p>Apakah Anda yakin ingin menghapus mata pelajaran
-                                                            <strong>{{ $item->nama_mapel }}</strong>?
-                                                        </p>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <form
-                                                            action="{{ route('guru.mata-pelajaran.destroy', $item->id) }}"
-                                                            method="POST">
+                    </div>
+                    <div class="card-body p-0">
+                        @if (session('success'))
+                            <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
+                                {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                        @endif
+                        {{-- @if (session('error') || isset($error))
+                            <div class="alert alert-danger alert-dismissible fade show m-3" role="alert">
+                                {{ session('error') ?? $error }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                        @endif --}}
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th style="width: 20%;">id</th>
+                                        <th style="width: 20%;">Kode Kriteria</th>
+                                        <th style="width: 40%;">Sub Kriteria</th>
+                                        <th style="width: 20%;">Nilai</th>
+                                        <th style="width: 20%;">Nilai min</th>
+                                        <th style="width: 20%;">Nilai max</th>
+                                        <th style="width: 20%;">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (isset($subKriterias) && $subKriterias->count() > 0)
+                                        @foreach ($subKriterias as $item)
+                                            <tr>
+                                                <td>{{ $item->id ?? 'N/A' }}</td>
+                                                <td>{{ $item->kode_kriteria ?? 'N/A' }}</td>
+                                                <td>{{ $item->sub_kriteria ?? 'N/A' }}</td>
+                                                <td>{{ $item->nilai ?? 'N/A' }}</td>
+                                                <td>{{ $item->nilai_min ?? 'N/A' }}</td>
+                                                <td>{{ $item->nilai_max ?? 'N/A' }}</td>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <!-- Tambahkan data-bs-toggle="modal" supaya modal muncul -->
+                                                        <button class="btn btn-warning btn-sm btn-edit me-2"
+                                                            data-id="{{ $item->id }}"
+                                                            data-kode="{{ $item->kode_kriteria }}"
+                                                            data-sub="{{ $item->sub_kriteria }}"
+                                                            data-nilai="{{ $item->nilai }}"
+                                                            data-min="{{ $item->nilai_min }}"
+                                                            data-max="{{ $item->nilai_max }}" data-bs-toggle="modal"
+                                                            data-bs-target="#editModal">
+                                                            Edit
+                                                        </button>
+                                                        <form method="POST"
+                                                            action="{{ route('sub-kriteria.destroy', $item->id) }}"
+                                                            style="display:inline;">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="submit"
-                                                                class="btn btn-danger">Hapus</button>
+                                                            <button type="submit" class="btn btn-danger btn-sm"
+                                                                onclick="return confirm('Yakin hapus?')">
+                                                                Hapus
+                                                            </button>
                                                         </form>
-                                                        <button type="button" class="btn btn-secondary"
-                                                            data-bs-dismiss="modal">Batal</button>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
 
+                                                </td>
+
+                                                </td>
+                                            </tr>
                                         @endforeach
-                                        @endif
-                                        </tbody>
-                                </table>
-                            </div>
+                                    @else
+                                        <tr>
+                                            <td colspan="6" class="text-center">Data Sub Kriteria tidak tersedia.
+                                            </td>
+                                        </tr>
+                                    @endif
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -172,34 +154,159 @@
         </div>
     </div>
 
-
-    <div class="modal fade" id="addDataModal" tabindex="-1" aria-hidden="true">
+    <!-- Modal Tambah Kriteria -->
+    <div class="modal fade" id="addKriteriaModal" tabindex="-1" aria-labelledby="addKriteriaModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form action="{{ route('guru.mata-pelajaran.store') }}" method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addKriteriaModalLabel">Tambah Kriteria</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('kriteria.store') }}" method="POST">
+                        @csrf
+                        <div class="mb-3">
+                            <label class="form-label">Kode</label>
+                            <input type="text" class="form-control" name="kode" placeholder="Contoh: C1"
+                                required>
+                            @error('kode')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nama</label>
+                            <input type="text" class="form-control" name="nama"
+                                placeholder="Contoh: Matematika" required>
+                            @error('nama')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Jenis</label>
+                            <select name="jenis" class="form-select" required>
+                                <option value="">Pilih Jenis</option>
+                                <option value="Benefit">Benefit</option>
+                                <option value="Cost">Cost</option>
+                            </select>
+                            @error('jenis')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tambah Sub Kriteria -->
+    <div class="modal fade" id="addSubKriteriaModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambah Sub Kriteria</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="POST" action="{{ route('sub-kriteria.store') }}">
                     @csrf
-                    <div class="modal-header">
-                        <h5 class="modal-title">Tambah Mata Pelajaran</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label class="form-label">Mata Pelajaran</label>
-                            <input type="text" class="form-control" name="nama_mapel" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Kode Kriteria</label>
-                            <select name="kriteria_id" class="form-select" required>
-                                <option value="">-- Pilih Kode Kriteria --</option>
-                                 @foreach ($kriterias as $kriteria)
-                                <option value="{{ $kriteria->id }}">{{ $kriteria->kode }} - {{ $kriteria->nama }}</option>
-                                @endforeach
+                            <label>Kode Kriteria</label>
+                            <select name="kode_kriteria" class="form-select" required>
+                                <option value="">Pilih...</option>
+                                @if (isset($kriterias))
+                                    @foreach ($kriterias as $k)
+                                        <option value="{{ $k->kode ?? $k->id }}">
+                                            {{ $k->kode ?? $k->id }} -
+                                            {{ $k->nama ?? ($k->nama_kriteria ?? 'Unnamed') }}
+                                        </option>
+                                    @endforeach
+                                @endif
                             </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Sub Kriteria</label>
+                            <input type="text" name="sub_kriteria" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Nilai (1-5)</label>
+                            <input type="number" name="nilai" class="form-control" min="1" max="5"
+                                required>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <label>Nilai Min</label>
+                                <input type="number" name="nilai_min" class="form-control" required>
+                            </div>
+                            <div class="col-6">
+                                <label>Nilai Max</label>
+                                <input type="number" name="nilai_max" class="form-control" required>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                         <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Edit Sub Kriteria -->
+    <!-- Modal Edit Sub Kriteria -->
+    <div class="modal fade" id="editModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Sub Kriteria</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="editForm" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label>Kode Kriteria</label>
+                            <select id="edit_kode" name="kode_kriteria" class="form-select" required>
+                                <option value="">Pilih...</option>
+                                @if (isset($kriterias))
+                                    @foreach ($kriterias as $k)
+                                        <option value="{{ $k->kode ?? $k->id }}">
+                                            {{ $k->kode ?? $k->id }} -
+                                            {{ $k->nama ?? ($k->nama_kriteria ?? 'Unnamed') }}
+                                        </option>
+                                    @endforeach
+                                @endif
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Sub Kriteria</label>
+                            <input type="text" id="edit_sub" name="sub_kriteria" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Nilai (1-5)</label>
+                            <input type="number" id="edit_nilai" name="nilai" class="form-control"
+                                min="1" max="5" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <label>Nilai Min</label>
+                                <input type="number" id="edit_min" name="nilai_min" class="form-control" required>
+                            </div>
+                            <div class="col-6">
+                                <label>Nilai Max</label>
+                                <input type="number" id="edit_max" name="nilai_max" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Update</button>
                     </div>
                 </form>
             </div>
@@ -208,110 +315,88 @@
 
 
 
-    <!-- Modal Tambah Kriteria -->
-    <div class="modal fade" id="addKriteriaModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Tambah Kriteria</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="{{ route('kriteria.store') }}" method="POST">
+    <!-- Modal Hapus Sub Kriteria -->
+    @foreach ($subKriterias ?? [] as $sub)
+        <div class="modal fade" id="deleteSubKriteriaModal{{ $sub->id }}" tabindex="-1"
+            aria-labelledby="deleteSubKriteriaModalLabel{{ $sub->id }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <form action="{{ route('sub-kriteria.destroy', $sub->id) }}" method="POST">
                         @csrf
-                        <div class="mb-3">
-                            <label class="form-label">Kode</label>
-                            <input type="text" class="form-control" name="kode" required>
+                        @method('DELETE')
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteSubKriteriaModalLabel{{ $sub->id }}">
+                                Konfirmasi Hapus</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Nama</label>
-                            <input type="text" class="form-control" name="nama" required>
+                        <div class="modal-body">
+                            Apakah Anda yakin ingin menghapus sub kriteria
+                            <strong>{{ $sub->sub_kriteria }}</strong>?
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Jenis</label>
-                            <select name="jenis" class="form-control" required>
-                                <option value="Benefit">Benefit</option>
-                                <option value="Cost">Cost</option>
-                            </select>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-danger">Hapus</button>
                         </div>
-                        <button type="submit" class="btn btn-primary">Tambah</button>
                     </form>
                 </div>
             </div>
         </div>
-    </div>
+    @endforeach
 
-    <!-- Modal Tambah Sub Kriteria -->
-    <div class="modal fade" id="addBobotKriteriaModal" tabindex="-1" aria-labelledby="addBobotKriteriaModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addBobotKriteriaModalLabel">Tambah Bobot Kriteria</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addBobotKriteriaForm" action="{{ route('bobot-kriteria.store') }}" method="POST">
-                        @csrf
-                        <div class="mb-3">
-                            <label class="form-label">Kriteria</label>
-                            <select class="form-select" name="kriteria_id" required>
-                                <option value="">Pilih Kriteria</option>
-                                @foreach ($kriterias as $kriteria)
-                                <option value="{{ $kriteria->id }}">{{ $kriteria->kode }} - {{ $kriteria->nama }}</option>
-                                @endforeach
-                            </select>
-                            @error('kriteria_id')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Kategori</label>
-                            <select class="form-select" name="kategori" required>
-                                <option value="mata_pelajaran">Mata Pelajaran</option>
-                                <option value="iq">IQ</option>
-                            </select>
-                            @error('kategori')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Rentang Nilai</label>
-                            <input type="text" class="form-control" name="rentang_nilai" placeholder="Contoh: 85-100 atau <70" required>
-                            @error('rentang_nilai')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Nilai Minimum</label>
-                            <input type="number" class="form-control" name="nilai_min" required>
-                            @error('nilai_min')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Nilai Maksimum</label>
-                            <input type="number" class="form-control" name="nilai_max" required>
-                            @error('nilai_max')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <button type="submit" class="btn btn-primary">Tambah</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 
 
     <!-- Footer -->
-    <footer class="mt-auto">
-        <p class="mb-0">&copy; 2024 Kode. All rights reserved.</p>
+    <footer class="bg-dark text-light text-center py-3 mt-auto">
+        <p class="mb-0">© 2025 Kode. All rights reserved.</p>
     </footer>
 
-    <!-- Bootstrap JS & SweetAlert -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-…"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('js/handler_sweet.js') }}"></script>
+    <script>
+        // Edit modal handler
+        document.querySelectorAll('.btn-edit').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = this.dataset.id;
+                document.getElementById('editForm').action = `/guru/sub-kriteria/${id}`;
+
+                document.getElementById('edit_kode').value = this.dataset.kode;
+                document.getElementById('edit_sub').value = this.dataset.sub;
+                document.getElementById('edit_nilai').value = this.dataset.nilai;
+                document.getElementById('edit_min').value = this.dataset.min;
+                document.getElementById('edit_max').value = this.dataset.max;
+            });
+        });
+    </script>
+    </script>
+    <script>
+        // SweetAlert for success/error messages
+        document.addEventListener('DOMContentLoaded', function() {
+                    @if (session('success'))
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil',
+                            text: '{{ session('success') }}',
+                            timer: 3000,
+                            showConfirmButton: false
+                        });
+                        // @endif
+                        // @if (session('error') || isset($error))
+                        //     Swal.fire({
+                        //         icon: 'error',
+                        //         title: 'Gagal',
+                        //         text: '{{ session('error') ?? $error }}',
+                        //         timer: 3000,
+                        //         showConfirmButton: false
+                        //     });
+                        // @endif
+                    });
+    </script>
 </body>
 
 </html>

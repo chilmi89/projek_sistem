@@ -11,12 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kriteria', function (Blueprint $table) {
-            $table->id();
-            $table->string('kode')->unique(); // C1, C2, dst
-            $table->string('nama');
-            $table->enum('jenis', ['Benefit', 'Cost']);
-            $table->timestamps();
+        Schema::table('siswa', function (Blueprint $table) {
+            $table->dropUnique(['nisn']); // First remove the unique constraint
+            $table->dropColumn('nisn');   // Then drop the column
         });
     }
 
@@ -25,6 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kriteria');
+        Schema::table('siswa', function (Blueprint $table) {
+            $table->char('nisn', 10)->unique()->after('nama');
+        });
     }
 };
