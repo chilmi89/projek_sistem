@@ -8,8 +8,70 @@
 
     <title>Hasil Pembagian Kelas</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    {{-- <link rel="stylesheet" href="{{ asset('css/style.css') }}"> --}}
+    <!-- <link rel="stylesheet" href="{{ asset('css/style.css') }}">  -->
     <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            margin-top: 90px;
+            background: linear-gradient(45deg, #4b79a1, #283e51);
+            color: #333;
+            font-family: "Arial", sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .glass-navbar {
+            background-color: black;
+            transition: background 0.3s ease, backdrop-filter 0.3s ease;
+            color: white;
+        }
+
+        /* Saat discroll, tambahkan efek glassmorphism */
+        .glass-navbar.scrolled {
+            background: rgba(0, 0, 0, 0.6);
+            /* tetap hitam tapi transparan */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .glass-navbar .nav-link {
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .glass-navbar .nav-link:hover,
+        .glass-navbar .nav-link.active {
+            color: #0dcaf0 !important;
+        }
+
+        .glass-navbar .navbar-toggler {
+            border: none;
+        }
+
+        /* Tambahan efek underline saat hover */
+        .glass-navbar .nav-link::after {
+            content: "";
+            display: block;
+            height: 2px;
+            width: 0;
+            background: #0dcaf0;
+            transition: width 0.3s ease-in-out;
+        }
+
+        .glass-navbar .nav-link:hover::after,
+        .glass-navbar .nav-link.active::after {
+            width: 100%;
+        }
+
         .table-responsive {
             font-size: 0.875rem;
         }
@@ -82,48 +144,15 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand" href="#">Kode</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
 
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('home') }}"> home </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('import.index') }}">Dashboard 2</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('guru.hasil.kuota-kelas.index') }}">kuota kelas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('guru.hasil.index') }}">Dashboard 3</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('guru.metodologi') }}">metodolgi </a>
-                    </li>
-                    <li class="nav-item">
-                        <form action="{{ route('logout') }}" method="POST" id="logout-form">
-                            @csrf
-                            <button type="submit" class="nav-link btn btn-link text-light">Logout</button>
-                        </form>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    @include('navbar.nav')
     <div class="container-fluid">
         {{-- Alert untuk pesan --}}
         @if ($pesan)
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                {{ $pesan }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
+        <div class="alert alert-warning alert-dismissible fade show mt-4" role="alert">
+            {{ $pesan }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
         @endif
 
         {{-- Alert untuk pesan dinamis dari AJAX --}}
@@ -135,7 +164,7 @@
         </div>
 
         {{-- Card Header dengan Tombol --}}
-        <div class="card mb-4">
+        <div class="card mb-4 mt-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4 class="mb-0">Hasil Perhitungan Weighted Product</h4>
                 <div class="btn-group" role="group">
@@ -151,10 +180,7 @@
 
 
 
-                    {{-- Tombol Kosongkan Data --}}
-                    {{-- <button type="button" class="btn btn-danger" onclick="clearDatabase()" id="btn-clear-db">
-                        <i class="fas fa-trash-alt me-1"></i> Kosongkan Data Weighted Product
-                    </button> --}}
+
                 </div>
             </div>
         </div>
@@ -203,62 +229,62 @@
                     </thead>
                     <tbody id="table-body">
                         @forelse ($hasilBobots ?? [] as $index => $siswa)
-                            <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $siswa->nama ?? '-' }}</td>
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $siswa->nama ?? '-' }}</td>
 
-                                {{-- Nilai Asli --}}
-                                <td>{{ number_format($siswa->c1 ?? 0, 2) }}</td>
-                                <td>{{ number_format($siswa->c2 ?? 0, 2) }}</td>
-                                <td>{{ number_format($siswa->c3 ?? 0, 2) }}</td>
-                                <td>{{ number_format($siswa->c4 ?? 0, 2) }}</td>
-                                <td>{{ number_format($siswa->c5 ?? 0, 2) }}</td>
+                            {{-- Nilai Asli --}}
+                            <td>{{ number_format($siswa->c1 ?? 0, 2) }}</td>
+                            <td>{{ number_format($siswa->c2 ?? 0, 2) }}</td>
+                            <td>{{ number_format($siswa->c3 ?? 0, 2) }}</td>
+                            <td>{{ number_format($siswa->c4 ?? 0, 2) }}</td>
+                            <td>{{ number_format($siswa->c5 ?? 0, 2) }}</td>
 
-                                {{-- Perpangkatan --}}
-                                <td>{{ number_format($siswa->c1_pow ?? 0, 4) }}</td>
-                                <td>{{ number_format($siswa->c2_pow ?? 0, 4) }}</td>
-                                <td>{{ number_format($siswa->c3_pow ?? 0, 4) }}</td>
-                                <td>{{ number_format($siswa->c4_pow ?? 0, 4) }}</td>
-                                <td>{{ number_format($siswa->c5_pow ?? 0, 4) }}</td>
+                            {{-- Perpangkatan --}}
+                            <td>{{ number_format($siswa->c1_pow ?? 0, 4) }}</td>
+                            <td>{{ number_format($siswa->c2_pow ?? 0, 4) }}</td>
+                            <td>{{ number_format($siswa->c3_pow ?? 0, 4) }}</td>
+                            <td>{{ number_format($siswa->c4_pow ?? 0, 4) }}</td>
+                            <td>{{ number_format($siswa->c5_pow ?? 0, 4) }}</td>
 
-                                {{-- Nilai S --}}
-                                <td>{{ number_format($siswa->nilai_s ?? 0, 6) }}</td>
+                            {{-- Nilai S --}}
+                            <td>{{ number_format($siswa->nilai_s ?? 0, 6) }}</td>
 
-                                {{-- Hasil Bagi --}}
-                                <td>{{ number_format($siswa->c1_bagi ?? 0, 4) }}</td>
-                                <td>{{ number_format($siswa->c2_bagi ?? 0, 4) }}</td>
-                                <td>{{ number_format($siswa->c3_bagi ?? 0, 4) }}</td>
-                                <td>{{ number_format($siswa->c4_bagi ?? 0, 4) }}</td>
-                                <td>{{ number_format($siswa->c5_bagi ?? 0, 4) }}</td>
+                            {{-- Hasil Bagi --}}
+                            <td>{{ number_format($siswa->c1_bagi ?? 0, 4) }}</td>
+                            <td>{{ number_format($siswa->c2_bagi ?? 0, 4) }}</td>
+                            <td>{{ number_format($siswa->c3_bagi ?? 0, 4) }}</td>
+                            <td>{{ number_format($siswa->c4_bagi ?? 0, 4) }}</td>
+                            <td>{{ number_format($siswa->c5_bagi ?? 0, 4) }}</td>
 
-                                {{-- Rekomendasi dan Alokasi --}}
-                                <td class="text-center">
-                                    <span class="badge bg-primary">{{ $siswa->rekomendasi_kriteria ?? '-' }}</span>
-                                </td>
-                                <td class="text-center">
-                                    <span class="badge bg-info">{{ $siswa->alokasi_kelas ?? '-' }}</span>
-                                </td>
-                                <td class="text-center">
-                                    @php
-                                        $status = $siswa->status_alokasi ?? 'belum';
-                                    @endphp
-                                    @if (strtolower($status) == 'sesuai')
-                                        <span class="badge bg-success">Sesuai</span>
-                                    @elseif(strtolower($status) == 'dialihkan')
-                                        <span class="badge bg-warning">Dialihkan</span>
-                                    @elseif(strtolower($status) == 'paksa')
-                                        <span class="badge bg-secondary">Paksa</span>
-                                    @elseif(strtolower($status) == 'over')
-                                        <span class="badge bg-danger">Over</span>
-                                    @else
-                                        <span class="badge bg-light text-dark">{{ ucfirst($status) }}</span>
-                                    @endif
-                                </td>
-                            </tr>
+                            {{-- Rekomendasi dan Alokasi --}}
+                            <td class="text-center">
+                                <span class="badge bg-primary">{{ $siswa->rekomendasi_kriteria ?? '-' }}</span>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-info">{{ $siswa->alokasi_kelas ?? '-' }}</span>
+                            </td>
+                            <td class="text-center">
+                                @php
+                                $status = $siswa->status_alokasi ?? 'belum';
+                                @endphp
+                                @if (strtolower($status) == 'sesuai')
+                                <span class="badge bg-success">Sesuai</span>
+                                @elseif(strtolower($status) == 'dialihkan')
+                                <span class="badge bg-warning">Dialihkan</span>
+                                @elseif(strtolower($status) == 'paksa')
+                                <span class="badge bg-secondary">Paksa</span>
+                                @elseif(strtolower($status) == 'over')
+                                <span class="badge bg-danger">Over</span>
+                                @else
+                                <span class="badge bg-light text-dark">{{ ucfirst($status) }}</span>
+                                @endif
+                            </td>
+                        </tr>
                         @empty
-                            <tr>
-                                <td colspan="20" class="text-center">Belum ada data hasil.</td>
-                            </tr>
+                        <tr>
+                            <td colspan="20" class="text-center">Belum ada data hasil.</td>
+                        </tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -289,9 +315,9 @@
                             <div>
                                 <h4 class="card-title" id="sesuai-count">
                                     @php
-                                        $sesuaiCount = collect($hasilBobots ?? [])
-                                            ->where('status_alokasi', 'Sesuai')
-                                            ->count();
+                                    $sesuaiCount = collect($hasilBobots ?? [])
+                                    ->where('status_alokasi', 'Sesuai')
+                                    ->count();
                                     @endphp
                                     {{ $sesuaiCount }}
                                 </h4>
@@ -311,9 +337,9 @@
                             <div>
                                 <h4 class="card-title" id="dialihkan-count">
                                     @php
-                                        $dialihkanCount = collect($hasilBobots ?? [])
-                                            ->where('status_alokasi', 'Dialihkan')
-                                            ->count();
+                                    $dialihkanCount = collect($hasilBobots ?? [])
+                                    ->where('status_alokasi', 'Dialihkan')
+                                    ->count();
                                     @endphp
                                     {{ $dialihkanCount }}
                                 </h4>
@@ -333,9 +359,9 @@
                             <div>
                                 <h4 class="card-title" id="over-count">
                                     @php
-                                        $overCount = collect($hasilBobots ?? [])
-                                            ->where('status_alokasi', 'Over')
-                                            ->count();
+                                    $overCount = collect($hasilBobots ?? [])
+                                    ->where('status_alokasi', 'Over')
+                                    ->count();
                                     @endphp
                                     {{ $overCount }}
                                 </h4>
@@ -358,82 +384,91 @@
             <div class="card-body">
                 <div class="row" id="kelas-summary">
                     @php
-                        $kelasStats = collect($hasilBobots ?? [])
-                            ->groupBy('alokasi_kelas')
-                            ->map(function ($group, $kelas) {
-                                return [
-                                    'kelas' => $kelas,
-                                    'total' => $group->count(),
-                                    'sesuai' => $group->where('status_alokasi', 'Sesuai')->count(),
-                                    'dialihkan' => $group->where('status_alokasi', 'Dialihkan')->count(),
-                                    // 'over' => $group->where('status_alokasi', 'Over')->count(),
-                                ];
-                            });
+                    $kelasStats = collect($hasilBobots ?? [])
+                    ->groupBy('alokasi_kelas')
+                    ->map(function ($group, $kelas) {
+                    return [
+                    'kelas' => $kelas,
+                    'total' => $group->count(),
+                    'sesuai' => $group->where('status_alokasi', 'Sesuai')->count(),
+                    'dialihkan' => $group->where('status_alokasi', 'Dialihkan')->count(),
+                    // 'over' => $group->where('status_alokasi', 'Over')->count(),
+                    ];
+                    });
                     @endphp
 
                     @foreach ($kelasStats as $stat)
-                        <div class="col-md-4 mb-3">
-                            <div class="card border-primary">
-                                <div class="card-body">
-                                    <h6 class="card-title text-primary">{{ $stat['kelas'] }}</h6>
-                                    <p class="card-text mb-1">
-                                        <strong>Total: {{ $stat['total'] }}</strong>
-                                    </p>
-                                    <small class="text-muted">
-                                        Sesuai: {{ $stat['sesuai'] }} |
-                                        Dialihkan: {{ $stat['dialihkan'] }} |
-                                        {{-- Over: {{ $stat['over'] }} --}}
-                                    </small>
-                                    <div class="progress mt-2" style="height: 8px;">
-                                        @php
-                                            $sesuaiPct =
-                                                $stat['total'] > 0 ? ($stat['sesuai'] / $stat['total']) * 100 : 0;
-                                            $dialihkanPct =
-                                                $stat['total'] > 0 ? ($stat['dialihkan'] / $stat['total']) * 100 : 0;
-                                            // $overPct = $stat['total'] > 0 ? ($stat['over'] / $stat['total']) * 100 : 0;
-                                        @endphp
-                                        <div class="progress-bar bg-success" style="width: {{ $sesuaiPct }}%">
-                                        </div>
-                                        <div class="progress-bar bg-warning" style="width: {{ $dialihkanPct }}%">
-                                        </div>
-                                        {{-- <div class="progress-bar bg-danger" style="width: {{ $overPct }}%">
-                                        </div> --}}
+                    <div class="col-md-4 mb-3">
+                        <div class="card border-primary">
+                            <div class="card-body">
+                                <h6 class="card-title text-primary">{{ $stat['kelas'] }}</h6>
+                                <p class="card-text mb-1">
+                                    <strong>Total: {{ $stat['total'] }}</strong>
+                                </p>
+                                <small class="text-muted">
+                                    Sesuai: {{ $stat['sesuai'] }} |
+                                    Dialihkan: {{ $stat['dialihkan'] }} |
+                                    {{-- Over: {{ $stat['over'] }} --}}
+                                </small>
+                                <div class="progress mt-2" style="height: 8px;">
+                                    @php
+                                    $sesuaiPct =
+                                    $stat['total'] > 0 ? ($stat['sesuai'] / $stat['total']) * 100 : 0;
+                                    $dialihkanPct =
+                                    $stat['total'] > 0 ? ($stat['dialihkan'] / $stat['total']) * 100 : 0;
+                                    // $overPct = $stat['total'] > 0 ? ($stat['over'] / $stat['total']) * 100 : 0;
+                                    @endphp
+                                    <div class="progress-bar bg-success" style="width: {{ $sesuaiPct }}%">
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-
-        {{-- Modal untuk View Saved Data --}}
-        <div class="modal fade" id="savedDataModal" tabindex="-1" aria-labelledby="savedDataModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog modal-xl">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="savedDataModalLabel">Data Tersimpan</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div id="saved-data-content">
-                            <div class="text-center">
-                                <div class="spinner-border" role="status">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
+                                    <div class="progress-bar bg-warning" style="width: {{ $dialihkanPct }}%">
+                                    </div>
+                                    {{-- <div class="progress-bar bg-danger" style="width: {{ $overPct }}%">
+                                </div> --}}
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
                 </div>
+                @endforeach
             </div>
         </div>
     </div>
 
+    {{-- Modal untuk View Saved Data --}}
+    <div class="modal fade" id="savedDataModal" tabindex="-1" aria-labelledby="savedDataModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="savedDataModalLabel">Data Tersimpan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="saved-data-content">
+                        <div class="text-center">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script>
+        window.addEventListener("scroll", function() {
+            const navbar = document.querySelector(".glass-navbar");
+            if (window.scrollY > 10) {
+                navbar.classList.add("scrolled");
+            } else {
+                navbar.classList.remove("scrolled");
+            }
+        });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>

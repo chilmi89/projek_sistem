@@ -55,267 +55,177 @@ class HasilController extends Controller
 
 
     private function prosesPembagianKelas()
-    {
-        // Ambil semua data kriteria, hasil bobot, dan kuota kelas dari DB
-        $kriteriaList = Kriteria::all()->keyBy('kode');
-        $hasilBobots = HasilBobot::all();
-        $kuotaKelasFromDB = KuotaKelas::all()->keyBy('kode');
+{
+    // Ambil semua data kriteria, hasil bobot, dan kuota kelas dari DB
+    $kriteriaList = Kriteria::all()->keyBy('kode');
+    $hasilBobots = HasilBobot::all();
+    $kuotaKelasFromDB = KuotaKelas::all()->keyBy('kode');
 
-        // Jika data penting kosong, return data default agar tidak error
-        if ($kriteriaList->isEmpty() || $hasilBobots->isEmpty() || $kuotaKelasFromDB->isEmpty()) {
-            return [
-                'hasilBobots' => $hasilBobots,
-                'daftarKelas' => [],
-                'konfigKelas' => [],
-                'kuotaTerisi' => [],
-                'kuotaKelasData' => $kuotaKelasFromDB,
-                'kuotaTotal' => [],
-                'pesan' => 'Data kriteria, hasil bobot, atau kuota kelas belum lengkap.',
-                'status_simpan' => false,
-            ];
-        }
+    // Cek jika ada data penting yang kosong
+    if ($kriteriaList->isEmpty() || $hasilBobots->isEmpty() || $kuotaKelasFromDB->isEmpty()) {
+        return [
+            'hasilBobots' => [],
+            'daftarKelas' => [],
+            'konfigKelas' => [],
+            'kuotaTerisi' => [],
+            'kuotaKelasData' => $kuotaKelasFromDB,
+            'kuotaTotal' => [],
+            'pesan' => 'Data kriteria, hasil bobot, atau kuota kelas belum lengkap.',
+            'status_simpan' => false, // Status simpan diatur false jika ada data kosong
+        ];
+    }
 
-        // Validasi bobot_roc pada kriteria
-        $requiredKriteria = ['C1', 'C2', 'C3', 'C4', 'C5'];
-        foreach ($requiredKriteria as $kode) {
-            if (!isset($kriteriaList[$kode]) || !isset($kriteriaList[$kode]->bobot_roc) || $kriteriaList[$kode]->bobot_roc === null) {
-                return [
-                    'hasilBobots' => $hasilBobots,
-                    'daftarKelas' => [],
-                    'konfigKelas' => [],
-                    'kuotaTerisi' => [],
-                    'kuotaKelasData' => $kuotaKelasFromDB,
-                    'kuotaTotal' => [],
-                    'pesan' => "Bobot ROC untuk kriteria $kode belum diatur. Silakan periksa konfigurasi kriteria.",
-                    'status_simpan' => false,
-                ];
-            }
-        }
+    // Inisialisasi konfigurasi kelas, kuota total, dan daftar kelas
+    $konfigKelas = [];
+    $kuotaTotal = [];
+    $kuotaTerisi = [];
+    $daftarKelas = [];
+    $kelasCounter = 1;
 
-        // Inisialisasi konfigurasi kelas dan kuota total serta kuota terisi
-        $konfigKelas = [];
-        $kuotaTotal = [];
-        $kuotaTerisi = [];
-        $daftarKelas = [];
+    // Membuat konfigurasi kelas, total kuota, dan daftar kelas per kriteria
+    foreach ($kuotaKelasFromDB as $kode => $kuota) {
+        $konfigKelas[$kode] = [
+            'jumlah_kelas' => $kuota->jumlah_kelas,
+            'kapasitas' => $kuota->kapasitas_per_kelas,
+        ];
+        $kuotaTotal[$kode] = $kuota->jumlah_kelas * $kuota->kapasitas_per_kelas;
+        $kuotaTerisi[$kode] = 0;
 
-        // Buat konfigurasi kelas, total kuota, dan daftar kelas per kriteria
-        foreach ($kuotaKelasFromDB as $kode => $kuota) {
-            $konfigKelas[$kode] = [
-                'jumlah_kelas' => $kuota->jumlah_kelas,
+        // Tentukan urutan kelas berdasarkan kriteria
+        for ($i = 1; $i <= $kuota->jumlah_kelas; $i++) {
+            $kelasKode = "$kode (MIPA) / Kelas $kelasCounter";
+            $daftarKelas[$kelasKode] = [
+                'kode' => $kelasKode,
                 'kapasitas' => $kuota->kapasitas_per_kelas,
+                'terisi' => 0,
+                'siswa' => [],
             ];
-            $kuotaTotal[$kode] = $kuota->jumlah_kelas * $kuota->kapasitas_per_kelas;
-            $kuotaTerisi[$kode] = 0;
+            $kelasCounter++; // Mengatur urutan kelas sesuai kuota
+        }
+    }
 
-            for ($i = 1; $i <= $kuota->jumlah_kelas; $i++) {
-                $kelasKode = "$kode-$i";
-                $daftarKelas[$kelasKode] = [
-                    'kode' => $kelasKode,
-                    'kapasitas' => $kuota->kapasitas_per_kelas,
-                    'terisi' => 0,
-                    'siswa' => [],
-                ];
+    // Proses WP untuk menentukan rekomendasi
+    foreach ($hasilBobots as $hasil) {
+        try {
+            // Hitung perpangkatan untuk setiap kriteria
+            $hasil->c1_pow = pow($hasil->c1, $kriteriaList['C1']->bobot_roc);
+            $hasil->c2_pow = pow($hasil->c2, $kriteriaList['C2']->bobot_roc);
+            $hasil->c3_pow = pow($hasil->c3, $kriteriaList['C3']->bobot_roc);
+            $hasil->c4_pow = pow($hasil->c4, $kriteriaList['C4']->bobot_roc);
+            $hasil->c5_pow = pow($hasil->c5, $kriteriaList['C5']->bobot_roc);
+
+            // Hitung nilai S
+            $hasil->nilai_s = $hasil->c1_pow * $hasil->c2_pow * $hasil->c3_pow * $hasil->c4_pow * $hasil->c5_pow;
+
+            // Pastikan nilai_s valid
+            if ($hasil->nilai_s == 0 || !is_finite($hasil->nilai_s)) {
+                $hasil->nilai_s = 0.0001;
+            }
+
+            // Bagi hasil per kriteria
+            $hasil->c1_bagi = $hasil->c1_pow / $hasil->nilai_s;
+            $hasil->c2_bagi = $hasil->c2_pow / $hasil->nilai_s;
+            $hasil->c3_bagi = $hasil->c3_pow / $hasil->nilai_s;
+            $hasil->c4_bagi = $hasil->c4_pow / $hasil->nilai_s;
+            $hasil->c5_bagi = $hasil->c5_pow / $hasil->nilai_s;
+        } catch (\Exception $e) {
+            \Log::error("Error calculating WP for student {$hasil->nama}: " . $e->getMessage());
+            $hasil->c1_pow = $hasil->c2_pow = $hasil->c3_pow = $hasil->c4_pow = $hasil->c5_pow = 1.0;
+            $hasil->nilai_s = 1.0;
+            $hasil->c1_bagi = $hasil->c2_bagi = $hasil->c3_bagi = $hasil->c4_bagi = $hasil->c5_bagi = 0.2;
+        }
+    }
+
+    // Tentukan rekomendasi berdasarkan C/S tertinggi
+    foreach ($hasilBobots as $hasil) {
+        $bagiArray = [
+            'C1' => $hasil->c1_bagi,
+            'C2' => $hasil->c2_bagi,
+            'C3' => $hasil->c3_bagi,
+            'C4' => $hasil->c4_bagi,
+            'C5' => $hasil->c5_bagi,
+        ];
+
+        $maxKey = array_search(max($bagiArray), $bagiArray);
+        $hasil->rekomendasi_kriteria = $maxKey;
+        $hasil->nilai_bagi_tertinggi = max($bagiArray);
+    }
+
+    // Pembagian kelas berdasarkan nilai_bagi_tertinggi
+    $siswaUrut = $hasilBobots->sortByDesc(function ($siswa) {
+        return $siswa->nilai_bagi_tertinggi;
+    })->values();
+
+    // Alokasikan siswa ke kelas sesuai rekomendasi kriteria
+    foreach ($siswaUrut as $siswa) {
+        $alokasiBerhasil = false;
+        $rekomendasiKriteria = $siswa->rekomendasi_kriteria ?? 'C1';
+
+        foreach ($daftarKelas as $kodeKelas => $kelas) {
+            // Periksa jika kelas sesuai dengan rekomendasi dan ada ruang
+            if (str_starts_with($kodeKelas, $rekomendasiKriteria) && $kelas['terisi'] < $kelas['kapasitas']) {
+                $daftarKelas[$kodeKelas]['siswa'][] = $siswa->nama;
+                $daftarKelas[$kodeKelas]['terisi']++;
+                $siswa->alokasi_kelas = $kodeKelas;
+                $siswa->status_alokasi = 'Sesuai'; // Update status alokasi menjadi 'Sesuai'
+                $alokasiBerhasil = true;
+                break;
             }
         }
 
-        // Validasi apakah ada kelas untuk kriteria yang direkomendasikan
-        $availableKriteria = array_keys($konfigKelas);
-        if (!in_array('C1', $availableKriteria)) {
-            return [
-                'hasilBobots' => $hasilBobots,
-                'daftarKelas' => [],
-                'konfigKelas' => [],
-                'kuotaTerisi' => [],
-                'kuotaKelasData' => $kuotaKelasFromDB,
-                'kuotaTotal' => [],
-                'pesan' => "Tidak ada kelas untuk kriteria C1. Silakan tambahkan konfigurasi kuota kelas untuk C1.",
-                'status_simpan' => false,
-            ];
-        }
-
-        // PERHITUNGAN WEIGHTED PRODUCT (WP)
-        foreach ($hasilBobots as $hasil) {
-            try {
-                // Hitung perpangkatan (c^bobot) untuk setiap kriteria
-                $hasil->c1_pow = pow($hasil->c1, $kriteriaList['C1']->bobot_roc);
-                $hasil->c2_pow = pow($hasil->c2, $kriteriaList['C2']->bobot_roc);
-                $hasil->c3_pow = pow($hasil->c3, $kriteriaList['C3']->bobot_roc);
-                $hasil->c4_pow = pow($hasil->c4, $kriteriaList['C4']->bobot_roc);
-                $hasil->c5_pow = pow($hasil->c5, $kriteriaList['C5']->bobot_roc);
-
-                // Hitung nilai S (perkalian semua nilai perpangkatan) untuk masing-masing siswa
-                $hasil->nilai_s = $hasil->c1_pow * $hasil->c2_pow * $hasil->c3_pow * $hasil->c4_pow * $hasil->c5_pow;
-
-                // Handle jika nilai_s adalah 0 atau tidak valid
-                if ($hasil->nilai_s == 0 || !is_finite($hasil->nilai_s)) {
-                    $hasil->nilai_s = 0.0001; // Set nilai minimum
-                }
-
-                // Hitung nilai bagi hasil (C^bobot / nilai_s) untuk masing-masing siswa
-                $hasil->c1_bagi = $hasil->c1_pow / $hasil->nilai_s;
-                $hasil->c2_bagi = $hasil->c2_pow / $hasil->nilai_s;
-                $hasil->c3_bagi = $hasil->c3_pow / $hasil->nilai_s;
-                $hasil->c4_bagi = $hasil->c4_pow / $hasil->nilai_s;
-                $hasil->c5_bagi = $hasil->c5_pow / $hasil->nilai_s;
-
-            } catch (\Exception $e) {
-                // Log error untuk debugging
-                \Log::error("Error calculating WP for student {$hasil->nama}: " . $e->getMessage());
-
-                // Set nilai default yang lebih realistis
-                $hasil->c1_pow = $hasil->c2_pow = $hasil->c3_pow = $hasil->c4_pow = $hasil->c5_pow = 1.0;
-                $hasil->nilai_s = 1.0;
-                $hasil->c1_bagi = $hasil->c2_bagi = $hasil->c3_bagi = $hasil->c4_bagi = $hasil->c5_bagi = 0.2;
-            }
-        }
-
-        // Tentukan rekomendasi berdasarkan C/S tertinggi
-        foreach ($hasilBobots as $hasil) {
-            $bagiArray = [
-                'C1' => $hasil->c1_bagi,
-                'C2' => $hasil->c2_bagi,
-                'C3' => $hasil->c3_bagi,
-                'C4' => $hasil->c4_bagi,
-                'C5' => $hasil->c5_bagi,
-            ];
-
-            $maxKey = array_search(max($bagiArray), $bagiArray);
-            $hasil->rekomendasi_kriteria = $maxKey;
-            $hasil->nilai_bagi_tertinggi = max($bagiArray);
-        }
-
-        // PEMBAGIAN KELAS BERDASARKAN NILAI HASIL BAGI (C/S) TERTINGGI
-
-        // Urutkan SEMUA siswa berdasarkan nilai_bagi_tertinggi (descending)
-        $siswaUrut = $hasilBobots->sortByDesc(function ($siswa) {
-            return $siswa->nilai_bagi_tertinggi;
-        })->values();
-
-        // Alokasikan siswa berdasarkan nilai_bagi_tertinggi dan rekomendasi kriteria
-        foreach ($siswaUrut as $siswa) {
-            $alokasiBerhasil = false;
-            $rekomendasiKriteria = $siswa->rekomendasi_kriteria ?? 'C1';
-
-            // Validasi apakah rekomendasi kriteria ada di kuota kelas
-            if (!isset($konfigKelas[$rekomendasiKriteria])) {
-                \Log::warning("Kriteria {$rekomendasiKriteria} tidak ditemukan di kuota kelas untuk siswa {$siswa->nama}.");
-                continue;
-            }
-
-            // Coba alokasikan ke kelas sesuai rekomendasi kriteria terlebih dahulu
+        // Jika alokasi tidak sesuai dengan rekomendasi, cari kelas yang masih tersedia
+        if (!$alokasiBerhasil) {
             foreach ($daftarKelas as $kodeKelas => $kelas) {
-                if (str_starts_with($kodeKelas, $rekomendasiKriteria) && $kelas['terisi'] < $kelas['kapasitas']) {
+                if ($kelas['terisi'] < $kelas['kapasitas']) {
                     $daftarKelas[$kodeKelas]['siswa'][] = $siswa->nama;
                     $daftarKelas[$kodeKelas]['terisi']++;
-                    $kuotaTerisi[$rekomendasiKriteria] = ($kuotaTerisi[$rekomendasiKriteria] ?? 0) + 1;
-
-                    $kriteria = explode('-', $kodeKelas)[0]; // Ambil C1, C2, dst
-                    $namaKriteria = $kuotaKelasFromDB[$kriteria]->nama_kriteria ?? '';
-
-                    preg_match('/\(\s*(.*?)\s*\)/', $namaKriteria, $match);
-                    $labelKriteria = $match[1] ?? '';
-
-                    // Format alokasi_kelas sebagai "C1-1 / Kelompok 1 / Kelas 1"
-                    $kelompokNumber = explode('-', $kodeKelas)[1];
-                    $formattedKelas = "$kodeKelas / $kriteria ($labelKriteria) / Kelas $kelompokNumber";
-
-                    $siswa->alokasi_kelas = $formattedKelas;
-                    $siswa->status_alokasi = 'Sesuai';
-
-                    $alokasiBerhasil = true;
+                    $siswa->alokasi_kelas = $kodeKelas;
+                    $siswa->status_alokasi = 'Dialihkan'; // Update status alokasi menjadi 'Dialihkan'
                     break;
                 }
             }
+        }
 
-            // Jika tidak berhasil, coba alokasikan ke kelas lain dengan kapasitas tersedia
-            if (!$alokasiBerhasil) {
-                foreach ($daftarKelas as $kodeKelas => $kelas) {
-                    if ($kelas['terisi'] < $kelas['kapasitas']) {
-                        $kriteria = explode('-', $kodeKelas)[0]; // Ambil C1, C2, dst
-                        $namaKriteria = $kuotaKelasFromDB[$kriteria]->nama_kriteria ?? '';
-
-                        // Ambil isi dalam tanda kurung, contoh: ( MIPA ) → MIPA
-                        preg_match('/\(\s*(.*?)\s*\)/', $namaKriteria, $match);
-                        $labelKriteria = $match[1] ?? '';
-
-                        $kelompokNumber = explode('-', $kodeKelas)[1];
-                        $formattedKelas = "$kodeKelas / $kriteria ($labelKriteria) / Kelas $kelompokNumber";
-                        $daftarKelas[$kodeKelas]['siswa'][] = $siswa->nama;
-                        $daftarKelas[$kodeKelas]['terisi']++;
-                        $kuotaTerisi[$kriteria] = ($kuotaTerisi[$kriteria] ?? 0) + 1;
-
-                        // Format alokasi_kelas
-                        $kelompokNumber = explode('-', $kodeKelas)[1];
-                        $formattedKelas = "$kodeKelas / $kriteria ($labelKriteria) / Kelas $kelompokNumber";
-                        $siswa->alokasi_kelas = $formattedKelas;
-                        $siswa->status_alokasi = 'Dialihkan';
-
-                        $alokasiBerhasil = true;
-                        break;
-                    }
-                }
-            }
-
-            // Jika masih belum berhasil, paksa alokasi ke kelas dengan sisa kapasitas terbanyak
-            if (!$alokasiBerhasil) {
-                $kelasTersedia = collect($daftarKelas)
-                    ->sortByDesc(function ($kelas) {
-                        return $kelas['kapasitas'] - $kelas['terisi'];
-                    })
-                    ->first();
-
-                if ($kelasTersedia) {
-                    $kodeKelas = $kelasTersedia['kode'];
-                    $kriteria = explode('-', $kodeKelas)[0]; // Ambil C1, C2, dst
-                    $namaKriteria = $kuotaKelasFromDB[$kriteria]->nama_kriteria ?? '';
+        // Jika tidak ada kelas yang bisa diisi, alokasikan kelas paksa
+        if (!$alokasiBerhasil && !isset($siswa->alokasi_kelas)) {
+            foreach ($daftarKelas as $kodeKelas => $kelas) {
+                if ($kelas['terisi'] < $kelas['kapasitas']) {
                     $daftarKelas[$kodeKelas]['siswa'][] = $siswa->nama;
                     $daftarKelas[$kodeKelas]['terisi']++;
-                    $kuotaTerisi[$kriteria] = ($kuotaTerisi[$kriteria] ?? 0) + 1;
-
-                    preg_match('/\(\s*(.*?)\s*\)/', $namaKriteria, $match);
-                    $labelKriteria = $match[1] ?? '';
-
-                    $kelompokNumber = explode('-', $kodeKelas)[1];
-                    $formattedKelas = "$kodeKelas / $kriteria ($labelKriteria) / Kelas $kelompokNumber";
-
-                    $siswa->alokasi_kelas = $formattedKelas;
-                    $siswa->status_alokasi = 'dialihkan';
-                } else {
-                    // Fallback terakhir
-                    $kelasFallback = 'C1-1';
-                    if (!isset($daftarKelas[$kelasFallback])) {
-                        $daftarKelas[$kelasFallback] = [
-                            'kode' => $kelasFallback,
-                            'kapasitas' => 0,
-                            'terisi' => 0,
-                            'siswa' => [],
-                        ];
-                    }
-                    $daftarKelas[$kelasFallback]['siswa'][] = $siswa->nama;
-                    $daftarKelas[$kelasFallback]['terisi']++;
-                    $kuotaTerisi['C1'] = ($kuotaTerisi['C1'] ?? 0) + 1;
-
-                    $formattedKelas = "C1-1 / Kelompok 1 / Kelas 1";
-                    $siswa->alokasi_kelas = $formattedKelas;
-                    $siswa->status_alokasi = 'Over';
+                    $siswa->alokasi_kelas = $kodeKelas;
+                    $siswa->status_alokasi = 'Paksa'; // Update status alokasi menjadi 'Paksa'
+                    break;
                 }
             }
         }
-
-        // Urutkan hasil berdasarkan nilai_bagi_tertinggi untuk tampilan
-        $hasilAkhir = $siswaUrut;
-
-        return [
-            'hasilBobots' => $hasilAkhir,
-            'daftarKelas' => $daftarKelas,
-            'konfigKelas' => $konfigKelas,
-            'kuotaTerisi' => $kuotaTerisi,
-            'kuotaKelasData' => $kuotaKelasFromDB,
-            'kuotaTotal' => $kuotaTotal,
-            'pesan' => null,
-            'status_simpan' => false, // Belum disimpan
-        ];
     }
+
+    // Menentukan status simpan berdasarkan apakah alokasi kelas berhasil
+    $statusSimpan = true; // Jika semua siswa berhasil dialokasikan
+    foreach ($daftarKelas as $kelas) {
+        if (count($kelas['siswa']) < 1) { // Cek jika ada kelas yang kosong
+            $statusSimpan = false;
+            break;
+        }
+    }
+
+    
+    \Log::info("Status simpan: " . ($statusSimpan ? 'Berhasil' : 'Gagal'));
+
+    // // Pesan untuk hasil pembagian
+    $pesan = $statusSimpan ? "Proses pembagian kelas selesai dengan sukses." : "Beberapa kelas tidak terisi, perlu pemeriksaan lebih lanjut.";
+
+    return [
+        'hasilBobots' => $siswaUrut,
+        'daftarKelas' => $daftarKelas,
+        'konfigKelas' => $konfigKelas,
+        'kuotaTerisi' => $kuotaTerisi,
+        'kuotaKelasData' => $kuotaKelasFromDB,
+        'kuotaTotal' => $kuotaTotal,
+        'pesan' => $pesan,
+        'status_simpan' => $statusSimpan, // Status simpan diatur true jika pembagian berhasil
+    ];
+}
 
     private function simpanHasilWeightedProduct($hasilBobots)
     {
@@ -405,8 +315,6 @@ class HasilController extends Controller
             ]);
         }
     }
-
-
 
     public function clearWeightedProduct()
     {

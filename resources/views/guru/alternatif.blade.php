@@ -14,44 +14,10 @@
 
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand" href="#">Kode</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+    
 
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('home') }}"> home </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('import.index') }}">Dashboard 2</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('guru.hasil.kuota-kelas.index') }}">kuota kelas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('guru.hasil.index') }}">Dashboard 3</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('guru.metodologi') }}">metodolgi </a>
-                    </li>
-                    <li class="nav-item">
-                        <form action="{{ route('logout') }}" method="POST" id="logout-form">
-                            @csrf
-                            <button type="submit" class="nav-link btn btn-link text-light">Logout</button>
-                        </form>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-
-    <div class="container mt-4">
+    @include('navbar.nav')
+    <div class="container mt-4 mb-3">
 
         {{-- Header dan Upload Form --}}
         <div class="card p-4 mb-4">
@@ -112,7 +78,7 @@
                             @foreach ($students as $index => $student)
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
-                                    <td>{{ $student->nama }}</td>
+                                    <td class="text-start">{{ $student->nama }}</td>
                                     <td>{{ $student->mtk_um }}</td>
                                     <td>{{ $student->ipa }}</td>
                                     <td>{{ $student->ips }}</td>
@@ -142,15 +108,9 @@
         </div>
     </div>
 
-
-    <!-- Modal Hapus Sub Kriteria -->
-
-
-
-
     <!-- Footer -->
-    <footer class="bg-dark text-light text-center py-3 mt-auto">
-        <p class="mb-0">© 2025 Kode. All rights reserved.</p>
+    <footer class="bg-dark text-light text-center py-3 mt-auto mt-4">
+        <p class="mb-0">© 2025 WP - ROC. All rights reserved.</p>
     </footer>
 
     <!-- Scripts -->

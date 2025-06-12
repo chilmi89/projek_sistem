@@ -3,38 +3,19 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Metodologi WP + ROC</title>
+    <title>Metodologi WP dan ROC</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
-
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}"> 
 </head>
 
 <body class="bg-light">
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-        <div class="container">
-            <a class="navbar-brand" href="#">Metodologi WP + ROC</a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link active" href="{{ route('home') }}">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('import.index') }}">Dashboard 2</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('guru.hasil.kuota-kelas.index') }}">Kuota Kelas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('guru.hasil.index') }}">Dashboard 3</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('guru.metodologi') }}">Metodologi</a></li>
-                    <li class="nav-item text-center">
-                        <form action="{{ route('logout') }}" method="POST" id="logout-form">
-                            @csrf
-                            <button type="submit" class="btn btn-sm btn-light">Logout</button>
-                        </form>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    @include('navbar.nav')
 
-    <div class="container">
+    <div class="container pt-4">
         <!-- Tombol Modal -->
         <div class="mb-4 text-center">
             <button class="btn btn-info me-2" data-bs-toggle="modal" data-bs-target="#modal1">Normalisasi Bobot</button>

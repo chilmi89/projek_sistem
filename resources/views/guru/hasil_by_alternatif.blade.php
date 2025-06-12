@@ -34,9 +34,14 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($hasilPerhitunganByAlternatif as $index => $item)
+                {{-- Modifikasi dimulai di sini --}}
+                @foreach($hasilPerhitunganByAlternatif as $item)
+                    @if($loop->iteration > 36) 
+                        @break
+                    @endif
                     <tr>
-                        <td class="text-center">{{ $index + 1 }}</td>
+                        {{-- Gunakan $loop->iteration untuk nomor urut 1-based --}}
+                        <td class="text-center">{{ $loop->iteration }}</td>
                         <td>{{ $item->nama_alternatif }}</td>
                         <td class="text-center">{{ number_format($item->c1, 4) }}</td>
                         <td class="text-center">{{ number_format($item->c2, 4) }}</td>
@@ -46,12 +51,15 @@
                         <td class="text-center fw-bold">{{ number_format($item->hasil_s, 6) }}</td>
                     </tr>
                 @endforeach
+                {{-- Modifikasi selesai di sini --}}
             </tbody>
         </table>
+
     @endif
 
     <a href="{{ route('guru.hasil.index') }}" class="btn btn-secondary mt-3">Kembali ke Daftar Hasil</a>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-

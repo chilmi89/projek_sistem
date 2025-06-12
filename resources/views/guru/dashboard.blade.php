@@ -14,41 +14,8 @@
 
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand" href="#">Kode</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('home') }}"> home </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('import.index') }}">Dashboard 2</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('guru.hasil.kuota-kelas.index') }}">kuota kelas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('guru.hasil.index') }}">Dashboard 3</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('guru.metodologi') }}">metodolgi </a>
-                    </li>
-                    <li class="nav-item">
-                        <form action="{{ route('logout') }}" method="POST" id="logout-form">
-                            @csrf
-                            <button type="submit" class="nav-link btn btn-link text-light">Logout</button>
-                        </form>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    
+    @include('navbar.nav')
 
     <!-- Content Wrapper -->
     <div class="container my-4">
@@ -73,85 +40,77 @@
                     </div>
                     <div class="card-body p-0">
                         @if (session('success'))
-                            <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
-                                {{ session('success') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                    aria-label="Close"></button>
-                            </div>
+                        <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                        </div>
                         @endif
                         {{-- @if (session('error') || isset($error))
                             <div class="alert alert-danger alert-dismissible fade show m-3" role="alert">
                                 {{ session('error') ?? $error }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                    aria-label="Close"></button>
-                            </div>
-                        @endif --}}
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0">
-                                <thead class="bg-light">
-                                    <tr>
-                                        <th style="width: 20%;">id</th>
-                                        <th style="width: 20%;">Kode Kriteria</th>
-                                        <th style="width: 40%;">Sub Kriteria</th>
-                                        <th style="width: 20%;">Nilai</th>
-                                        <th style="width: 20%;">Nilai min</th>
-                                        <th style="width: 20%;">Nilai max</th>
-                                        <th style="width: 20%;">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if (isset($subKriterias) && $subKriterias->count() > 0)
-                                        @foreach ($subKriterias as $item)
-                                            <tr>
-                                                <td>{{ $item->id ?? 'N/A' }}</td>
-                                                <td>{{ $item->kode_kriteria ?? 'N/A' }}</td>
-                                                <td>{{ $item->sub_kriteria ?? 'N/A' }}</td>
-                                                <td>{{ $item->nilai ?? 'N/A' }}</td>
-                                                <td>{{ $item->nilai_min ?? 'N/A' }}</td>
-                                                <td>{{ $item->nilai_max ?? 'N/A' }}</td>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <!-- Tambahkan data-bs-toggle="modal" supaya modal muncul -->
-                                                        <button class="btn btn-warning btn-sm btn-edit me-2"
-                                                            data-id="{{ $item->id }}"
-                                                            data-kode="{{ $item->kode_kriteria }}"
-                                                            data-sub="{{ $item->sub_kriteria }}"
-                                                            data-nilai="{{ $item->nilai }}"
-                                                            data-min="{{ $item->nilai_min }}"
-                                                            data-max="{{ $item->nilai_max }}" data-bs-toggle="modal"
-                                                            data-bs-target="#editModal">
-                                                            Edit
-                                                        </button>
-                                                        <form method="POST"
-                                                            action="{{ route('sub-kriteria.destroy', $item->id) }}"
-                                                            style="display:inline;">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn btn-danger btn-sm"
-                                                                onclick="return confirm('Yakin hapus?')">
-                                                                Hapus
-                                                            </button>
-                                                        </form>
-                                                    </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+                    </div>
+                    @endif --}}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th style="width: 20%;">id</th>
+                                    <th style="width: 20%;">Kode Kriteria</th>
+                                    <th style="width: 40%;">Sub Kriteria</th>
+                                    <th style="width: 20%;">Nilai</th>
+                                    <th style="width: 20%;">Nilai min</th>
+                                    <th style="width: 20%;">Nilai max</th>
+                                    <th style="width: 20%;">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (isset($subKriterias) && $subKriterias->count() > 0)
+                                @foreach ($subKriterias as $item)
+                                <tr>
+                                    <td>{{ $item->id ?? 'N/A' }}</td>
+                                    <td>{{ $item->kode_kriteria ?? 'N/A' }}</td>
+                                    <td>{{ $item->sub_kriteria ?? 'N/A' }}</td>
+                                    <td>{{ $item->nilai ?? 'N/A' }}</td>
+                                    <td>{{ $item->nilai_min ?? 'N/A' }}</td>
+                                    <td>{{ $item->nilai_max ?? 'N/A' }}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <!-- Tambahkan data-bs-toggle="modal" supaya modal muncul -->
+                                            <button class="btn btn-warning btn-sm btn-edit me-2"
+                                                data-id="{{ $item->id }}"
+                                                data-kode="{{ $item->kode_kriteria }}"
+                                                data-sub="{{ $item->sub_kriteria }}"
+                                                data-nilai="{{ $item->nilai }}"
+                                                data-min="{{ $item->nilai_min }}"
+                                                data-max="{{ $item->nilai_max }}" data-bs-toggle="modal"
+                                                data-bs-target="#editModal">
+                                                Edit
+                                            </button>
 
-                                                </td>
+                                            </form>
+                                        </div>
 
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    @else
-                                        <tr>
-                                            <td colspan="6" class="text-center">Data Sub Kriteria tidak tersedia.
-                                            </td>
-                                        </tr>
-                                    @endif
-                                </tbody>
-                            </table>
-                        </div>
+                                    </td>
+
+                                    </td>
+                                </tr>
+                                @endforeach
+                                @else
+                                <tr>
+                                    <td colspan="6" class="text-center">Data Sub Kriteria tidak tersedia.
+                                    </td>
+                                </tr>
+                                @endif
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
     <!-- Modal Tambah Kriteria -->
@@ -167,11 +126,11 @@
                     <form action="{{ route('kriteria.store') }}" method="POST">
                         @csrf
                         <div class="mb-3">
-                            <label class="form-label">Kode</label>
+                            <label class="form-label">Dashboard Guru</label>
                             <input type="text" class="form-control" name="kode" placeholder="Contoh: C1"
                                 required>
                             @error('kode')
-                                <div class="text-danger">{{ $message }}</div>
+                            <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="mb-3">
@@ -179,7 +138,7 @@
                             <input type="text" class="form-control" name="nama"
                                 placeholder="Contoh: Matematika" required>
                             @error('nama')
-                                <div class="text-danger">{{ $message }}</div>
+                            <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="mb-3">
@@ -190,7 +149,7 @@
                                 <option value="Cost">Cost</option>
                             </select>
                             @error('jenis')
-                                <div class="text-danger">{{ $message }}</div>
+                            <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="modal-footer">
@@ -219,12 +178,12 @@
                             <select name="kode_kriteria" class="form-select" required>
                                 <option value="">Pilih...</option>
                                 @if (isset($kriterias))
-                                    @foreach ($kriterias as $k)
-                                        <option value="{{ $k->kode ?? $k->id }}">
-                                            {{ $k->kode ?? $k->id }} -
-                                            {{ $k->nama ?? ($k->nama_kriteria ?? 'Unnamed') }}
-                                        </option>
-                                    @endforeach
+                                @foreach ($kriterias as $k)
+                                <option value="{{ $k->kode ?? $k->id }}">
+                                    {{ $k->kode ?? $k->id }} -
+                                    {{ $k->nama ?? ($k->nama_kriteria ?? 'Unnamed') }}
+                                </option>
+                                @endforeach
                                 @endif
                             </select>
                         </div>
@@ -275,12 +234,12 @@
                             <select id="edit_kode" name="kode_kriteria" class="form-select" required>
                                 <option value="">Pilih...</option>
                                 @if (isset($kriterias))
-                                    @foreach ($kriterias as $k)
-                                        <option value="{{ $k->kode ?? $k->id }}">
-                                            {{ $k->kode ?? $k->id }} -
-                                            {{ $k->nama ?? ($k->nama_kriteria ?? 'Unnamed') }}
-                                        </option>
-                                    @endforeach
+                                @foreach ($kriterias as $k)
+                                <option value="{{ $k->kode ?? $k->id }}">
+                                    {{ $k->kode ?? $k->id }} -
+                                    {{ $k->nama ?? ($k->nama_kriteria ?? 'Unnamed') }}
+                                </option>
+                                @endforeach
                                 @endif
                             </select>
                         </div>
@@ -313,42 +272,9 @@
         </div>
     </div>
 
-
-
-    <!-- Modal Hapus Sub Kriteria -->
-    @foreach ($subKriterias ?? [] as $sub)
-        <div class="modal fade" id="deleteSubKriteriaModal{{ $sub->id }}" tabindex="-1"
-            aria-labelledby="deleteSubKriteriaModalLabel{{ $sub->id }}" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <form action="{{ route('sub-kriteria.destroy', $sub->id) }}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="deleteSubKriteriaModalLabel{{ $sub->id }}">
-                                Konfirmasi Hapus</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            Apakah Anda yakin ingin menghapus sub kriteria
-                            <strong>{{ $sub->sub_kriteria }}</strong>?
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-danger">Hapus</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    @endforeach
-
-
-
     <!-- Footer -->
     <footer class="bg-dark text-light text-center py-3 mt-auto">
-        <p class="mb-0">© 2025 Kode. All rights reserved.</p>
+        <p class="mb-0">© 2025 WP - ROC. All rights reserved.</p>
     </footer>
 
     <!-- Scripts -->
@@ -377,25 +303,26 @@
     <script>
         // SweetAlert for success/error messages
         document.addEventListener('DOMContentLoaded', function() {
-                    @if (session('success'))
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil',
-                            text: '{{ session('success') }}',
-                            timer: 3000,
-                            showConfirmButton: false
-                        });
-                        // @endif
-                        // @if (session('error') || isset($error))
-                        //     Swal.fire({
-                        //         icon: 'error',
-                        //         title: 'Gagal',
-                        //         text: '{{ session('error') ?? $error }}',
-                        //         timer: 3000,
-                        //         showConfirmButton: false
-                        //     });
-                        // @endif
-                    });
+            @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: '{{ session('
+                success ') }}',
+                timer: 3000,
+                showConfirmButton: false
+            });
+            // @endif
+            // @if (session('error') || isset($error))
+            //     Swal.fire({
+            //         icon: 'error',
+            //         title: 'Gagal',
+            //         text: '{{ session('error') ?? $error }}',
+            //         timer: 3000,
+            //         showConfirmButton: false
+            //     });
+            // @endif
+        });
     </script>
 </body>
 

@@ -19,7 +19,7 @@ class DataSiswaController extends Controller
 
     public function index(Request $request)
     {
-        $students = Student::paginate(5);
+        $students = Student::paginate(36);
         return view('guru.alternatif', [
             'students' => $students,
         ]);
